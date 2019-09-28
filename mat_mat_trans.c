@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
 
 	while (used_matrix_size <= MAXSIZE)
 	{
-		//allocate memory for the matrix
+		//dynamically allocate memory for the matrix
 		mat_mul = (double**)calloc(used_matrix_size * used_matrix_size, sizeof(double*));
 		for (i = 0; i < used_matrix_size; i++)
 		{
@@ -113,8 +113,11 @@ int main(int argc, char* argv[])
 
 		//flops/s = FLOP/execution time
 		//MB/s = MB/ load time
-		MB[storage_size] = (8 * used_matrix_size * used_matrix_size) / pow(10, 6); //2*4*N^2 in bytes
-		FLOP[storage_size] = 2 * used_matrix_size * used_matrix_size * used_matrix_size; //2N^3
+		// It takes 4*N^2 in bytes to read a NxN size matrix and 2*4*N^2 to read two of those
+		MB[storage_size] = (8 * used_matrix_size * used_matrix_size) / pow(10, 6); 
+
+		//matrix-matrix multiplication takes 2*N^3 Floating point operation
+		FLOP[storage_size] = 2 * used_matrix_size * used_matrix_size * used_matrix_size; 
 
 		ioStart = omp_get_wtime(); //io read time starts
 		matA = readfile(argv[1], used_matrix_size, used_matrix_size);
