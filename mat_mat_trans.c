@@ -8,8 +8,8 @@
 #include <omp.h>
 
 //change based on the size of the matrix you want to calculate
-#define MINSIZE 128
-#define MAXSIZE 4096
+#define MINSIZE 16
+#define MAXSIZE 512
 #define storage 6 // the number of intervals between 2^7 = 128 and 2^12 = 4096 
 
 #define index(i,j,cols) i*cols+j // to extract an element (i,j) from a matrix with cols column
