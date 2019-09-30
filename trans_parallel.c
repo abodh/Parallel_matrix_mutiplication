@@ -121,23 +121,6 @@ int main(int argc, char* argv[])
 			mat_mul[i] = (double*)calloc(used_matrix_size * used_matrix_size, sizeof(double));
 		}
 
-		//dynamically allocate memory for the (MAT_B) Transpose
-		matB_trans = (double**)calloc(used_matrix_size * used_matrix_size, sizeof(double*));
-		for (i = 0; i < used_matrix_size; i++)
-		{
-			matB_trans[i] = (double*)calloc(used_matrix_size * used_matrix_size, sizeof(double));
-		}
-
-		// Finding (MAT_B) Transpose for improved performance
-		for (i = 0; i < used_matrix_size; i++)
-		{
-			
-			for (j = 0; j < used_matrix_size; j++)
-			{
-				matB_trans[j][i] = matB[index(i, j, used_matrix_size)];
-			}
-		}		
-
 		// to store the matrix sizes in a matrix
 		sizeofMAT[storage_size] = used_matrix_size;
 
@@ -158,7 +141,23 @@ int main(int argc, char* argv[])
 
 		//perform linear algebra here and time how long it takes
 
-		
+		//dynamically allocate memory for the (MAT_B) Transpose
+		matB_trans = (double**)calloc(used_matrix_size * used_matrix_size, sizeof(double*));
+		for (i = 0; i < used_matrix_size; i++)
+		{
+			matB_trans[i] = (double*)calloc(used_matrix_size * used_matrix_size, sizeof(double));
+		}
+
+		// Finding (MAT_B) Transpose for improved performance
+		for (i = 0; i < used_matrix_size; i++)
+		{
+			
+			for (j = 0; j < used_matrix_size; j++)
+			{
+				matB_trans[j][i] = matB[index(i, j, used_matrix_size)];
+			}
+		}
+
 		execStart = omp_get_wtime(); // execution time starts
 		#pragma omp parallel for private(i,j,k,icalc) shared(mat_mul)
 		for (i = 0; i < used_matrix_size; i++)
