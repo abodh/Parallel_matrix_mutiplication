@@ -148,13 +148,17 @@ int main(int argc, char* argv[])
 		execTime[storage_size] = execEnd - execStart; // total execution time
 		printf("total execution time of %d x %d matrix = %f sec\n", used_matrix_size, used_matrix_size, execTime[storage_size]);
 
+		/*
+		
 		//to check if the multiplication works correctly		
 		for (i = 0; i < used_matrix_size; i++)
 		{
 			printf("\n value of c[%d] = %f \n", i, mat_mul[i][0]);
 		}
 		
+		*/ 
 
+		printf("\n value of c[%d] = %f \n", (used_matrix_size - 1) , mat_mul[(used_matrix_size - 1)][0]);
 		used_matrix_size = used_matrix_size * 2;
 		storage_size++;
 
