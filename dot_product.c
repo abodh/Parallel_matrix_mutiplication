@@ -131,28 +131,10 @@ int main(int argc, char* argv[])
 		{
 			c[storage_size] += matA[index(0, i, used_matrix_size)] * matB[index(i, 0, 1)]; // c for each of the used_matrix_size
 		}
-		
 		execEnd = omp_get_wtime(); // execution time ends
 		execTime[storage_size] = execEnd - execStart; // total execution time
 		printf("total execution time of dot product of two vectors = %f sec\n", execTime[storage_size]);
 		
-		/*
-
-		// time for parallel dot product when N = 4096
-		if (used_matrix_size == 4096)
-		{
-			execStart = omp_get_wtime(); // execution time starts
-			#pragma omp parallel for reduction (+:max_c)
-			for (int i = 0; i < used_matrix_size; i++)
-			{
-				max_c += matA[index(0, i, used_matrix_size)] * matB[index(i, 0, 1)];
-			}	
-			execEnd = omp_get_wtime(); // execution time ends
-			printf("total execution time of dot product of two 4096 vectors = %f sec\n", (execEnd - execStart);
-		}
-		printf("the value of max_c = %f \n",max_c);
-
-		*/
 		used_matrix_size = used_matrix_size * 2;
 		storage_size++;
 
