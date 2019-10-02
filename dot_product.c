@@ -1,6 +1,6 @@
 /*
 
-DOT PRODUCT PRODUCT
+DOT PRODUCT
 
 author: 
 Abodh Poudyal
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 	}
 
 	// indices for the loop or the matrices
-	int i, j, k, used_matrix_size, storage_size, val_check, icalc;
+	int i, j, k, used_matrix_size, storage_size;
 
 	//variables to calculate the computation indices
 	double ioStart, ioEnd, execStart, execEnd;

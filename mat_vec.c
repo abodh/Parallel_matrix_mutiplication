@@ -1,4 +1,16 @@
-// MATRIX-VECTOR PRODUCT
+/*
+
+MATRIX VECTOR PRODUCT
+
+author: 
+Abodh Poudyal
+MSEE South Dakota State University
+
+Course Project: Introduction to High Performance Computing
+September, 2019
+
+*/ 
+ 
 
 #include <stdio.h>
 #include <stdint.h>
@@ -7,14 +19,12 @@
 #include <math.h>
 #include <omp.h>
 
-//change based on the shape of your matrix
-// #define ROWS 4096
-// #define COLS 4096
+//change based on the size of the vector you want to calculate
 #define MINSIZE 128
 #define MAXSIZE 4096
-#define storage 6
+#define storage 6 // the number of intervals between 2^7 = 128 and 2^12 = 4096 
 
-#define index(i,j,cols) i*cols+j
+#define index(i,j,cols) i*cols+j // to extract an element (i,j) from a matrix with cols column
 
 /*
 *	Function: initializeMatrix
@@ -81,7 +91,7 @@ int main(int argc, char* argv[])
 	}
 
 	// indices for the loop or the matrices
-	int i, j, k, used_matrix_size, a;
+	int i, j, k, used_matrix_size, storage_size;
 
 	//variables to calculate the computation indices
 	double ioStart, ioEnd, execStart, execEnd;
@@ -97,7 +107,7 @@ int main(int argc, char* argv[])
 	double** mat_mul;
 
 	used_matrix_size = MINSIZE; //matrix size currently in use
-	a = 0; //storage size index
+	storage_size = 0; //storage size index
 
 	while (used_matrix_size <= MAXSIZE)
 	{
@@ -109,27 +119,19 @@ int main(int argc, char* argv[])
 		}
 
 		// to store the matrix sizes in a matrix
-		sizeofMAT[a] = used_matrix_size;
+		sizeofMAT[storage_size] = used_matrix_size;
 
 		//flops/s = FLOP/execution time
 		//MB/s = MB/ load time
-		MB[a] = (8 * used_matrix_size * used_matrix_size) / pow(10, 6); //2*4*N^2 in bytes
-		FLOP[a] = (2 * used_matrix_size * used_matrix_size) - used_matrix_size; //2N^2-N
+		MB[storage_size] = (8 * used_matrix_size * used_matrix_size) / pow(10, 6); //2*4*N^2 in bytes
+		FLOP[storage_size] = (2 * used_matrix_size * used_matrix_size) - used_matrix_size; //2N^2-N
 
 		ioStart = omp_get_wtime(); //io read time starts
 		matA = readfile(argv[1], used_matrix_size, used_matrix_size);
 		matB = readfile(argv[2], used_matrix_size, 1);
 		ioEnd = omp_get_wtime(); //io read time ends
-		ioTime[a] = ioEnd - ioStart; //total io time to read
-		printf("\n total i/o read time of %d x %d matrix and %d x 1 vector= %f sec\n", used_matrix_size, used_matrix_size, used_matrix_size, ioTime[a]);
-
-		/* From Dr. Hansen's code
-
-			printf("total load time: %f s\n", t0);
-			 printf("load speed: %f MB/s\n", MB / t0);
-			 printf("element (4,4) = %f\n", matA[index(4, 4, 4096)]);
-
-		*/
+		ioTime[storage_size] = ioEnd - ioStart; //total io time to read
+		printf("\n total i/o read time of %d x %d matrix and %d x 1 vector= %f sec\n", used_matrix_size, used_matrix_size, used_matrix_size, ioTime[storage_size]);
 
 		//perform linear algebra here and time how long it takes
 
@@ -140,24 +142,21 @@ int main(int argc, char* argv[])
 				for (j = 0; j < used_matrix_size; j++)
 				{
 					mat_mul[i][0] += matA[index(i, j, used_matrix_size)] * matB[index(j, 0, 1)];
-					// printf("\n element (%d,%d) of matA %f \n", i, j, matA[index(i, j, used_matrix_size)]);
-					// printf("\n element (%d,0) of matB %f \n", j, matB[index(j, 0, 1)]);
 				}
 			}
 		execEnd = omp_get_wtime(); // execution time ends
-		execTime[a] = execEnd - execStart; // total execution time
-		printf("total execution time of %d x %d matrix = %f sec\n", used_matrix_size, used_matrix_size, execTime[a]);
+		execTime[storage_size] = execEnd - execStart; // total execution time
+		printf("total execution time of %d x %d matrix = %f sec\n", used_matrix_size, used_matrix_size, execTime[storage_size]);
 
-		/*
 		//to check if the multiplication works correctly		
 		for (i = 0; i < used_matrix_size; i++)
 		{
 			printf("\n value of c[%d] = %f \n", i, mat_mul[i][0]);
 		}
-		*/
+		
 
 		used_matrix_size = used_matrix_size * 2;
-		a++;
+		storage_size++;
 
 		if (used_matrix_size <= MAXSIZE)
 		{
